@@ -1,0 +1,8 @@
+# Task Management System
+
+node_modules/
+target/
+build/
+*.log
+.env
+.DS_Store
