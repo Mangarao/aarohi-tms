@@ -1,7 +1,7 @@
 # Task Management System
 
 node_modules/
-target/
+# target/
 build/
 *.log
 .env
