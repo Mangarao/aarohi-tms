@@ -2,7 +2,7 @@
 
 node_modules/
 # target/
-build/
+# build/ (commented out to allow frontend build folder)
 *.log
 .env
 .DS_Store

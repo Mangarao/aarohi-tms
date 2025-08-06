@@ -6,8 +6,7 @@ node_modules/
 # Testing
 /coverage
 
-# Production build
-#/build
+# Production build (build folder is included in git for deployment)
 
 # Environment variables
 .env
