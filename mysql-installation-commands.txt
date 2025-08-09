@@ -1,0 +1,150 @@
+# MYSQL INSTALLATION COMMANDS FOR VPS
+# Copy and paste these commands one by one into your VPS terminal
+
+# =====================================================
+# STEP 1: UPDATE SYSTEM AND INSTALL MYSQL
+# =====================================================
+
+# Update package manager
+sudo apt update
+
+# Install MySQL Server
+sudo apt install mysql-server -y
+
+# Start and enable MySQL service
+sudo systemctl start mysql
+sudo systemctl enable mysql
+
+# Check MySQL status
+sudo systemctl status mysql
+
+# =====================================================
+# STEP 2: CONFIGURE MYSQL FOR REMOTE ACCESS
+# =====================================================
+
+# Edit MySQL configuration file
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# Find the line: bind-address = 127.0.0.1
+# Change it to: bind-address = 0.0.0.0
+# Save and exit (Ctrl+X, then Y, then Enter)
+
+# OR use this command to change it automatically:
+sudo sed -i 's/bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# =====================================================
+# STEP 3: CREATE DATABASE AND USER
+# =====================================================
+
+# Connect to MySQL as root (it may not ask for password initially)
+sudo mysql -u root
+
+# Run these SQL commands (copy-paste one by one):
+CREATE DATABASE IF NOT EXISTS task_management_db;
+
+CREATE USER 'aarohi'@'%' IDENTIFIED WITH mysql_native_password BY 'aarohi@Del1';
+CREATE USER 'aarohi'@'localhost' IDENTIFIED WITH mysql_native_password BY 'aarohi@Del1';
+
+GRANT ALL PRIVILEGES ON task_management_db.* TO 'aarohi'@'%';
+GRANT ALL PRIVILEGES ON task_management_db.* TO 'aarohi'@'localhost';
+
+FLUSH PRIVILEGES;
+
+# Verify the setup
+SHOW DATABASES;
+SELECT User, Host FROM mysql.user WHERE User='aarohi';
+SHOW GRANTS FOR 'aarohi'@'%';
+
+EXIT;
+
+# =====================================================
+# STEP 4: RESTART MYSQL AND CONFIGURE FIREWALL
+# =====================================================
+
+# Restart MySQL to apply changes
+sudo systemctl restart mysql
+
+# Configure firewall
+sudo ufw allow 3306    # MySQL
+sudo ufw allow 8080    # Spring Boot
+sudo ufw allow 80      # HTTP
+sudo ufw allow 443     # HTTPS
+sudo ufw allow 22      # SSH
+
+# Check firewall status
+sudo ufw status
+
+# =====================================================
+# STEP 5: TEST CONNECTIONS
+# =====================================================
+
+# Test local connection
+mysql -u aarohi -p'aarohi@Del1' -h localhost task_management_db
+
+# Check if MySQL is listening on all interfaces
+sudo netstat -tlnp | grep :3306
+
+# Check MySQL service status
+sudo systemctl status mysql
+
+# Test database operations
+mysql -u aarohi -p'aarohi@Del1' -h localhost -e "USE task_management_db; SHOW TABLES;"
+
+# =====================================================
+# STEP 6: VERIFY FROM YOUR LOCAL MACHINE
+# =====================================================
+
+# From your Windows machine, test the connection:
+# mysql -u aarohi -p -h 119.18.55.169 task_management_db
+
+# OR use telnet to test port connectivity:
+# telnet 119.18.55.169 3306
+
+# =====================================================
+# TROUBLESHOOTING COMMANDS (if needed)
+# =====================================================
+
+# If you need to reset MySQL root password:
+# sudo mysql_secure_installation
+
+# If connection is denied, check user again:
+# sudo mysql -u root
+# SELECT User, Host, authentication_string FROM mysql.user WHERE User='aarohi';
+
+# If still issues, recreate user:
+# DROP USER IF EXISTS 'aarohi'@'%';
+# CREATE USER 'aarohi'@'%' IDENTIFIED WITH mysql_native_password BY 'aarohi@Del1';
+# GRANT ALL PRIVILEGES ON task_management_db.* TO 'aarohi'@'%';
+# FLUSH PRIVILEGES;
+
+# Check MySQL error log if issues:
+# sudo tail -f /var/log/mysql/error.log
+
+# =====================================================
+# SPRING BOOT CONFIGURATION VERIFICATION
+# =====================================================
+
+# Your application-prod.properties should have:
+# spring.datasource.url=jdbc:mysql://119.18.55.169:3306/task_management_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+# spring.datasource.username=aarohi
+# spring.datasource.password=aarohi@Del1
+
+# =====================================================
+# FINAL SUCCESS VERIFICATION
+# =====================================================
+
+# After MySQL setup is complete, these should all work:
+
+# 1. MySQL service running
+sudo systemctl status mysql
+
+# 2. Port 3306 listening
+sudo ss -tlnp | grep :3306
+
+# 3. Local database connection
+mysql -u aarohi -p'aarohi@Del1' -h localhost task_management_db
+
+# 4. Database exists
+mysql -u aarohi -p'aarohi@Del1' -h localhost -e "SHOW DATABASES;" | grep task_management_db
+
+# If all above work, your MySQL is ready for Spring Boot!

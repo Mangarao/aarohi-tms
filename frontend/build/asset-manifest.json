@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/aarohi-tms/static/css/main.4a8954ae.css",
-    "main.js": "/aarohi-tms/static/js/main.23c2a35d.js",
-    "index.html": "/aarohi-tms/index.html",
-    "main.4a8954ae.css.map": "/aarohi-tms/static/css/main.4a8954ae.css.map",
-    "main.23c2a35d.js.map": "/aarohi-tms/static/js/main.23c2a35d.js.map"
+    "main.css": "/static/css/main.4a8954ae.css",
+    "main.js": "/static/js/main.5ced8da3.js",
+    "index.html": "/index.html",
+    "main.4a8954ae.css.map": "/static/css/main.4a8954ae.css.map",
+    "main.5ced8da3.js.map": "/static/js/main.5ced8da3.js.map"
   },
   "entrypoints": [
     "static/css/main.4a8954ae.css",
-    "static/js/main.23c2a35d.js"
+    "static/js/main.5ced8da3.js"
   ]
 }

@@ -4,10 +4,7 @@ import axios from 'axios';
 const api = axios.create({
   //baseURL: 'http://localhost:8080/api',
   baseURL: 'http://119.18.55.169:8080/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+  });
 
 // Request interceptor to add JWT token
 api.interceptors.request.use(

@@ -28,5 +28,7 @@ com\aarohi\tms\security\UserPrincipal.class
 com\aarohi\tms\service\UserService.class
 com\aarohi\tms\entity\Complaint.class
 com\aarohi\tms\security\JwtUtils.class
+com\aarohi\tms\config\SwaggerConfig.class
 com\aarohi\tms\entity\Priority.class
+com\aarohi\tms\controller\HealthController.class
 com\aarohi\tms\repository\ComplaintRepository.class

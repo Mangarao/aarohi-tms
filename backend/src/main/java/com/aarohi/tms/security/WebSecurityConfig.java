@@ -70,6 +70,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/test/**").permitAll()
                         .requestMatchers("/complaints/public").permitAll()
                         .requestMatchers("/complaints/check-existing/**").permitAll()
+                        // Swagger UI endpoints
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-resources/**").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 );
         

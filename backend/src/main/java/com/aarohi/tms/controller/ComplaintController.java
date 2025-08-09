@@ -25,6 +25,7 @@ import com.aarohi.tms.entity.Status;
 import com.aarohi.tms.security.UserPrincipal;
 import com.aarohi.tms.service.ComplaintService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 /**
@@ -33,6 +34,7 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/complaints")
+@Tag(name = "Complaint Management", description = "APIs for managing complaints, tasks, and complaint lifecycle")
 public class ComplaintController {
     
     @Autowired

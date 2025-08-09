@@ -24,6 +24,12 @@ import com.aarohi.tms.security.JwtUtils;
 import com.aarohi.tms.security.UserPrincipal;
 import com.aarohi.tms.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 /**
@@ -32,6 +38,7 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Authentication management APIs for login, registration and token operations")
 public class AuthController {
     
     @Autowired
@@ -49,6 +56,24 @@ public class AuthController {
     /**
      * User login endpoint
      */
+    @Operation(
+        summary = "User Login",
+        description = "Authenticate user with username, password and role. Returns JWT token on successful authentication."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", 
+                    description = "Login successful",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = JwtResponse.class))),
+        @ApiResponse(responseCode = "400", 
+                    description = "Invalid credentials or role mismatch",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = MessageResponse.class))),
+        @ApiResponse(responseCode = "401", 
+                    description = "Authentication failed",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = MessageResponse.class)))
+    })
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         
@@ -85,6 +110,20 @@ public class AuthController {
     /**
      * User registration endpoint (Admin can create Staff accounts)
      */
+    @Operation(
+        summary = "User Registration", 
+        description = "Register a new user. Admin can create staff accounts. Returns success message on successful registration."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", 
+                    description = "User registered successfully",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = MessageResponse.class))),
+        @ApiResponse(responseCode = "400", 
+                    description = "Username already exists or validation error",
+                    content = @Content(mediaType = "application/json", 
+                                     schema = @Schema(implementation = MessageResponse.class)))
+    })
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         
