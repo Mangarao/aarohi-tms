@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,11 +56,13 @@ public class Expense {
     // Many expenses belong to one complaint
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "complaint_id", nullable = false)
+    @JsonIgnore
     private Complaint complaint;
     
     // Expense added by which user (staff)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "added_by_user_id")
+    @JsonIgnore
     private User addedBy;
     
     // Constructors

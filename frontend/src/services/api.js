@@ -2,9 +2,14 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const api = axios.create({
-  //baseURL: 'http://localhost:8080/api',
-  baseURL: 'http://119.18.55.169:8080/api',
-  });
+  baseURL: 'http://localhost:8080/api',
+ // baseURL: 'http://119.18.55.169:8080/api',
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  }
+});
 
 // Request interceptor to add JWT token
 api.interceptors.request.use(
@@ -13,6 +18,15 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add timestamp to prevent caching
+    if (config.method === 'get') {
+      config.params = {
+        ...config.params,
+        _t: Date.now()
+      };
+    }
+    
     return config;
   },
   (error) => {

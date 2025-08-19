@@ -62,7 +62,7 @@ function App() {
             path="/login" 
             element={
               user ? (
-                <Navigate to={authService.isAdmin() ? "/admin/dashboard" : "/staff/dashboard"} />
+                <Navigate to={user.role === 'ROLE_ADMIN' ? "/admin/dashboard" : "/staff/dashboard"} />
               ) : (
                 <Login onLogin={handleLogin} />
               )
@@ -73,7 +73,7 @@ function App() {
           <Route 
             path="/admin/dashboard" 
             element={
-              user && authService.isAdmin() ? (
+              user && user.role === 'ROLE_ADMIN' ? (
                 <AdminDashboard />
               ) : (
                 <Navigate to="/login" />
@@ -84,7 +84,7 @@ function App() {
           <Route 
             path="/staff/dashboard" 
             element={
-              user && authService.isStaff() ? (
+              user && user.role === 'ROLE_STAFF' ? (
                 <StaffDashboard />
               ) : (
                 <Navigate to="/login" />
@@ -128,7 +128,7 @@ function App() {
           <Route 
             path="/users" 
             element={
-              user && authService.isAdmin() ? (
+              user && user.role === 'ROLE_ADMIN' ? (
                 <UserManagement />
               ) : (
                 <Navigate to="/login" />
@@ -141,7 +141,7 @@ function App() {
             path="/" 
             element={
               user ? (
-                <Navigate to={authService.isAdmin() ? "/admin/dashboard" : "/staff/dashboard"} />
+                <Navigate to={user.role === 'ROLE_ADMIN' ? "/admin/dashboard" : "/staff/dashboard"} />
               ) : (
                 <Navigate to="/login" />
               )

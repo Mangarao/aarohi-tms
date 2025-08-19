@@ -9,6 +9,31 @@
 - ✅ Nginx installed
 - ✅ Project directories created: `/opt/aarohi-tms/frontend` and `/opt/aarohi-tms/backend`
 
+
+# Fix backend directory ownership and permissions
+sudo chown -R root:root /opt/aarohi-tms/backend/
+sudo chmod 755 /opt/aarohi-tms/backend/
+
+# Make JAR file executable
+sudo chmod +x /opt/aarohi-tms/backend/task-management-system-1.0.0.jar
+
+# Set permissions for configuration files
+sudo chmod 644 /opt/aarohi-tms/backend/application-prod.properties
+
+# Create and set permissions for logs directory
+sudo mkdir -p /opt/aarohi-tms/backend/logs
+sudo chmod 755 /opt/aarohi-tms/backend/logs
+sudo chown -R root:root /opt/aarohi-tms/backend/logs
+
+# Fix permissions for static directory and all subdirectories
+sudo chmod -R 755 /opt/aarohi-tms/frontend/static/
+sudo chown -R www-data:www-data /opt/aarohi-tms/frontend/static/
+
+# Also fix the main frontend directory
+sudo chown -R www-data:www-data /opt/aarohi-tms/frontend/
+sudo chmod -R 755 /opt/aarohi-tms/frontend/
+
+
 ## ⚠️ IMPORTANT: Your Backend is Working Fine!
 **Status**: ✅ Spring Boot application starts successfully  
 **Issue Found**: Minor configuration warnings (now fixed)  

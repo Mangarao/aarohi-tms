@@ -20,6 +20,7 @@ com\aarohi\tms\service\ComplaintService.class
 com\aarohi\tms\repository\ExpenseRepository.class
 com\aarohi\tms\security\WebSecurityConfig.class
 com\aarohi\tms\security\AuthEntryPointJwt.class
+com\aarohi\tms\config\WebConfig$ApiCacheControlInterceptor.class
 com\aarohi\tms\config\DataInitializer.class
 com\aarohi\tms\entity\User.class
 com\aarohi\tms\service\UserService$UserStats.class
@@ -31,4 +32,5 @@ com\aarohi\tms\security\JwtUtils.class
 com\aarohi\tms\config\SwaggerConfig.class
 com\aarohi\tms\entity\Priority.class
 com\aarohi\tms\controller\HealthController.class
+com\aarohi\tms\config\WebConfig.class
 com\aarohi\tms\repository\ComplaintRepository.class
