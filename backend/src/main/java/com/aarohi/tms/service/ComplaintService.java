@@ -88,6 +88,41 @@ public class ComplaintService {
     }
     
     /**
+     * Assign complaint to staff with schedule date
+     */
+    public Complaint assignComplaintWithSchedule(Long complaintId, Long staffId, LocalDateTime scheduleDate) {
+        Complaint complaint = complaintRepository.findById(complaintId)
+            .orElseThrow(() -> new RuntimeException("Complaint not found with id: " + complaintId));
+        
+        User staff = userRepository.findById(staffId)
+            .orElseThrow(() -> new RuntimeException("Staff not found with id: " + staffId));
+        
+        if (staff.getRole() != Role.STAFF) {
+            throw new RuntimeException("User is not a staff member");
+        }
+        
+        complaint.setAssignedStaff(staff);
+        complaint.setStatus(Status.ASSIGNED);
+        complaint.setScheduledDate(scheduleDate);
+        complaint.setUpdatedDate(LocalDateTime.now());
+        
+        return complaintRepository.save(complaint);
+    }
+    
+    /**
+     * Update schedule date for a complaint
+     */
+    public Complaint updateScheduleDate(Long complaintId, LocalDateTime scheduleDate) {
+        Complaint complaint = complaintRepository.findById(complaintId)
+            .orElseThrow(() -> new RuntimeException("Complaint not found with id: " + complaintId));
+        
+        complaint.setScheduledDate(scheduleDate);
+        complaint.setUpdatedDate(LocalDateTime.now());
+        
+        return complaintRepository.save(complaint);
+    }
+    
+    /**
      * Update complaint status
      */
     public Complaint updateComplaintStatus(Long id, Status status, String resolutionNotes) {
@@ -240,5 +275,142 @@ public class ComplaintService {
      */
     public List<Complaint> getComplaintsByMobileAndActiveStatus(String mobileNumber) {
         return complaintRepository.findByMobileNumberAndStatusNot(mobileNumber, Status.CLOSED);
+    }
+    
+    /**
+     * Get staff schedule for a specific date
+     */
+    public List<Complaint> getStaffScheduleForDate(Long staffId, String date) {
+        try {
+            LocalDateTime startDate = LocalDateTime.parse(date + "T00:00:00");
+            LocalDateTime endDate = LocalDateTime.parse(date + "T23:59:59");
+            
+            return complaintRepository.findByAssignedStaffIdAndScheduledDateBetween(
+                staffId, startDate, endDate);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching staff schedule for date: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get all staff schedules for a date range
+     */
+    public List<Complaint> getAllStaffSchedules(String startDate, String endDate) {
+        try {
+            LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+            LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+            
+            return complaintRepository.findByScheduledDateBetween(start, end);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching all staff schedules: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get weekly schedule summary
+     */
+    public Object getWeeklyScheduleSummary(String startDate) {
+        try {
+            LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+            LocalDateTime end = start.plusDays(7);
+            
+            List<Complaint> weeklyComplaints = complaintRepository.findByScheduledDateBetween(start, end);
+            
+            // Create summary object
+            return new Object() {
+                public final int totalScheduled = weeklyComplaints.size();
+                public final long pending = weeklyComplaints.stream()
+                    .filter(c -> c.getStatus() == Status.ASSIGNED)
+                    .count();
+                public final long inProgress = weeklyComplaints.stream()
+                    .filter(c -> c.getStatus() == Status.IN_PROGRESS)
+                    .count();
+                public final long completed = weeklyComplaints.stream()
+                    .filter(c -> c.getStatus() == Status.CLOSED)
+                    .count();
+            };
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching weekly schedule summary: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get complaints by schedule date range
+     */
+    public List<Complaint> getComplaintsByScheduleDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return complaintRepository.findByScheduledDateBetween(startDate, endDate);
+    }
+    
+    /**
+     * Get complaints by staff and schedule date range
+     */
+    public List<Complaint> getComplaintsByStaffAndScheduleDateRange(Long staffId, LocalDateTime startDate, LocalDateTime endDate) {
+        return complaintRepository.findByAssignedStaffIdAndScheduledDateBetween(staffId, startDate, endDate);
+    }
+    
+    /**
+     * Get today's scheduled complaints
+     */
+    public List<Complaint> getTodaysScheduledComplaints() {
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+        return complaintRepository.findByScheduledDateBetween(startOfDay, endOfDay);
+    }
+    
+    /**
+     * Get this week's scheduled complaints
+     */
+    public List<Complaint> getWeeklyScheduledComplaints() {
+        LocalDateTime startOfWeek = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        // Adjust to start of current week (Monday)
+        startOfWeek = startOfWeek.minusDays(startOfWeek.getDayOfWeek().getValue() - 1);
+        LocalDateTime endOfWeek = startOfWeek.plusDays(7).minusNanos(1);
+        return complaintRepository.findByScheduledDateBetween(startOfWeek, endOfWeek);
+    }
+    
+    /**
+     * Get staff schedule summary for date range
+     */
+    public Object getStaffScheduleSummary(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Complaint> complaints = complaintRepository.findByScheduledDateBetween(startDate, endDate);
+        
+        // Group by staff and create summary
+        return complaints.stream()
+            .filter(c -> c.getAssignedStaff() != null)
+            .collect(java.util.stream.Collectors.groupingBy(
+                c -> c.getAssignedStaff(),
+                java.util.stream.Collectors.collectingAndThen(
+                    java.util.stream.Collectors.toList(),
+                    list -> new Object() {
+                        public final String staffName = list.get(0).getAssignedStaff().getFullName();
+                        public final Long staffId = list.get(0).getAssignedStaff().getId();
+                        public final int totalScheduled = list.size();
+                        public final long pending = list.stream()
+                            .filter(c -> c.getStatus() == Status.ASSIGNED)
+                            .count();
+                        public final long inProgress = list.stream()
+                            .filter(c -> c.getStatus() == Status.IN_PROGRESS)
+                            .count();
+                        public final long completed = list.stream()
+                            .filter(c -> c.getStatus() == Status.CLOSED)
+                            .count();
+                    }
+                )
+            ));
+    }
+    
+    /**
+     * Check if a user can access a specific complaint
+     * Used for authorization in @PreAuthorize annotations
+     */
+    public boolean canUserAccessComplaint(Long complaintId, Long userId) {
+        Optional<Complaint> complaintOpt = getComplaintById(complaintId);
+        if (complaintOpt.isEmpty()) {
+            return false;
+        }
+        
+        Complaint complaint = complaintOpt.get();
+        return complaint.getAssignedStaff() != null && 
+               complaint.getAssignedStaff().getId().equals(userId);
     }
 }

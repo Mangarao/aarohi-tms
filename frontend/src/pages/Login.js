@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
 /**
  * Login page component
  */
 const Login = ({ onLogin }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -43,6 +45,18 @@ const Login = ({ onLogin }) => {
           <Col xs={12} sm={8} md={6} lg={4}>
             <Card className="login-card">
               <Card.Body className="p-5">
+                {/* File New Complaint/Enquiry Link at Top */}
+                <div className="text-center mb-4">
+                  <Button
+                    variant="outline-primary"
+                    onClick={() => navigate('/complaint')}
+                    className="mb-3"
+                    size="sm"
+                  >
+                    📝 File New Complaint/Enquiry
+                  </Button>
+                </div>
+
                 <div className="text-center mb-4">
                   {/* Company Logo */}
                   <div className="mb-3">
@@ -109,7 +123,7 @@ const Login = ({ onLogin }) => {
                   <Button
                     variant="primary"
                     type="submit"
-                    className="w-100 mb-3"
+                    className="w-100"
                     disabled={loading}
                   >
                     {loading ? (

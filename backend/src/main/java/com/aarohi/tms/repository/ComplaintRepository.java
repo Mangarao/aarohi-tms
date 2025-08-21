@@ -129,4 +129,20 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
      * Find complaints by mobile number excluding specific status
      */
     List<Complaint> findByMobileNumberAndStatusNot(String mobileNumber, Status status);
+    
+    /**
+     * Find complaints by assigned staff and schedule date range
+     */
+    List<Complaint> findByAssignedStaffIdAndScheduledDateBetween(Long assignedStaffId, LocalDateTime startDate, LocalDateTime endDate);
+    
+    /**
+     * Find complaints by schedule date range
+     */
+    List<Complaint> findByScheduledDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    
+    /**
+     * Find scheduled complaints for a specific staff member
+     */
+    @Query("SELECT c FROM Complaint c WHERE c.assignedStaff.id = :staffId AND c.scheduledDate IS NOT NULL ORDER BY c.scheduledDate ASC")
+    List<Complaint> findScheduledComplaintsByStaffId(@Param("staffId") Long staffId);
 }

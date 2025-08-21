@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Import components
 import Login from './pages/Login';
+import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import StaffDashboard from './pages/StaffDashboard';
 import ComplaintForm from './components/ComplaintForm';
@@ -143,7 +144,7 @@ function App() {
               user ? (
                 <Navigate to={user.role === 'ROLE_ADMIN' ? "/admin/dashboard" : "/staff/dashboard"} />
               ) : (
-                <Navigate to="/login" />
+                <HomePage />
               )
             } 
           />

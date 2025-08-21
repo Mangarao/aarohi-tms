@@ -30,9 +30,10 @@ const NavbarComponent = ({ user, onLogout }) => {
                 fontWeight: 'bold'
               }}
             >
-              TMS
+              📋
             </div>
-            Task Management System
+            <span className="d-none d-md-inline">Task Management System</span>
+            <span className="d-inline d-md-none">TMS</span>
           </div>
         </Navbar.Brand>
         
@@ -42,13 +43,13 @@ const NavbarComponent = ({ user, onLogout }) => {
             {isAdmin && (
               <>
                 <LinkContainer to="/admin/dashboard">
-                  <Nav.Link>Dashboard</Nav.Link>
+                  <Nav.Link>📊 <span className="d-none d-lg-inline">Dashboard</span></Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/complaints">
-                  <Nav.Link>All Complaints</Nav.Link>
+                  <Nav.Link>📋 <span className="d-none d-lg-inline">All Complaints</span></Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/users">
-                  <Nav.Link>User Management</Nav.Link>
+                  <Nav.Link>👥 <span className="d-none d-lg-inline">User Management</span></Nav.Link>
                 </LinkContainer>
               </>
             )}
@@ -56,36 +57,37 @@ const NavbarComponent = ({ user, onLogout }) => {
             {isStaff && (
               <>
                 <LinkContainer to="/staff/dashboard">
-                  <Nav.Link>Dashboard</Nav.Link>
+                  <Nav.Link>📊 <span className="d-none d-lg-inline">Dashboard</span></Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/complaints">
-                  <Nav.Link>My Complaints</Nav.Link>
+                  <Nav.Link>📋 <span className="d-none d-lg-inline">My Complaints</span></Nav.Link>
                 </LinkContainer>
               </>
             )}
             
             <LinkContainer to="/complaints/new">
-              <Nav.Link>New Complaint</Nav.Link>
+              <Nav.Link>➕ <span className="d-none d-lg-inline">New Complaint</span></Nav.Link>
             </LinkContainer>
           </Nav>
           
           <Nav>
             <Dropdown align="end">
-              <Dropdown.Toggle variant="outline-light" id="dropdown-basic">
-                {user.fullName}
+              <Dropdown.Toggle variant="outline-light" id="dropdown-basic" className="d-flex align-items-center">
+                <span className="me-2">👤</span>
+                <span className="d-none d-sm-inline">{user.fullName}</span>
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
                 <Dropdown.ItemText>
                   <div>
-                    <strong>{user.fullName}</strong><br />
-                    <small className="text-muted">{user.email}</small><br />
-                    <small className="text-muted">Role: {user.role.replace('ROLE_', '')}</small>
+                    <strong>👤 {user.fullName}</strong><br />
+                    <small className="text-muted">📧 {user.email}</small><br />
+                    <small className="text-muted">🏷️ Role: {user.role.replace('ROLE_', '')}</small>
                   </div>
                 </Dropdown.ItemText>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={onLogout}>
-                  Logout
+                  🚪 Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

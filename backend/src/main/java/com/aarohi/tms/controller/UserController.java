@@ -172,6 +172,16 @@ public class UserController {
     }
     
     /**
+     * Get all staff members (Admin only)
+     */
+    @GetMapping("/staff")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllStaff() {
+        List<User> staffMembers = userService.getAllStaff();
+        return ResponseEntity.ok(staffMembers);
+    }
+    
+    /**
      * Get user statistics (Admin only)
      */
     @GetMapping("/stats")

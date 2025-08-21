@@ -105,8 +105,8 @@ public class Complaint {
     private String resolutionNotes;
     
     @Column(name = "schedule_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime scheduleDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime scheduledDate;
     
     @Column(name = "completion_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -268,12 +268,12 @@ public class Complaint {
         this.resolutionNotes = resolutionNotes;
     }
     
-    public LocalDateTime getScheduleDate() {
-        return scheduleDate;
+    public LocalDateTime getScheduledDate() {
+        return scheduledDate;
     }
     
-    public void setScheduleDate(LocalDateTime scheduleDate) {
-        this.scheduleDate = scheduleDate;
+    public void setScheduledDate(LocalDateTime scheduledDate) {
+        this.scheduledDate = scheduledDate;
     }
     
     public LocalDateTime getCompletionDate() {

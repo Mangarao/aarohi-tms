@@ -217,20 +217,22 @@ const UserManagement = () => {
                         </small>
                       </td>
                       <td>
-                        <div className="btn-group btn-group-sm">
+                        <div className="d-flex flex-column flex-sm-row gap-1">
                           <Button
                             variant="outline-primary"
                             size="sm"
                             onClick={() => handleShowModal(user)}
+                            className="mb-1 mb-sm-0"
                           >
-                            Edit
+                            ✏️ Edit
                           </Button>
                           <Button
                             variant={user.isActive ? 'outline-warning' : 'outline-success'}
                             size="sm"
                             onClick={() => handleToggleActive(user.id, user.isActive)}
+                            className="mb-1 mb-sm-0"
                           >
-                            {user.isActive ? 'Deactivate' : 'Activate'}
+                            {user.isActive ? '⏸️ Deactivate' : '▶️ Activate'}
                           </Button>
                           {user.username !== 'admin' && (
                             <Button
@@ -238,7 +240,7 @@ const UserManagement = () => {
                               size="sm"
                               onClick={() => handleDeleteUser(user.id)}
                             >
-                              Delete
+                              🗑️ Delete
                             </Button>
                           )}
                         </div>
@@ -305,7 +307,7 @@ const UserManagement = () => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Mobile Number *</Form.Label>
                   <Form.Control
@@ -320,7 +322,7 @@ const UserManagement = () => {
             </Row>
 
             <Row>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>
                     Password {editingUser ? '(Leave blank to keep current)' : '*'}
@@ -335,7 +337,7 @@ const UserManagement = () => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Role *</Form.Label>
                   <Form.Select

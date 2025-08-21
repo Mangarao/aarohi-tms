@@ -64,6 +64,16 @@ class UserService {
     }
   }
 
+  // Get all staff members (active and inactive)
+  async getAllStaff() {
+    try {
+      const response = await api.get('/users/staff');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
   // Get user statistics
   async getUserStats() {
     try {

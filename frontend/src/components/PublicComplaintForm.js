@@ -153,7 +153,7 @@ const PublicComplaintForm = () => {
 
                 <Form onSubmit={handleSubmit}>
                   <Row>
-                    <Col md={6}>
+                    <Col xs={12} md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Customer Name *</Form.Label>
                         <Form.Control
@@ -166,7 +166,7 @@ const PublicComplaintForm = () => {
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
+                    <Col xs={12} md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>Mobile Number *</Form.Label>
                         <Form.Control
@@ -214,7 +214,7 @@ const PublicComplaintForm = () => {
                   </Form.Group>
 
                   <Row>
-                    <Col md={6}>
+                    <Col xs={12} md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>City *</Form.Label>
                         <Form.Control
@@ -227,7 +227,7 @@ const PublicComplaintForm = () => {
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={6}>
+                    <Col xs={12} md={6}>
                       <Form.Group className="mb-3">
                         <Form.Label>State *</Form.Label>
                         <Form.Control

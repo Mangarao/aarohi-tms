@@ -28,7 +28,8 @@ const ComplaintForm = () => {
     priority: 'MEDIUM',
     status: 'OPEN',
     assignedStaff: null,
-    resolutionNotes: ''
+    resolutionNotes: '',
+    scheduledDate: ''
   });
 
   const [staffMembers, setStaffMembers] = useState([]);
@@ -66,7 +67,9 @@ const ComplaintForm = () => {
         ...complaint,
         machinePurchaseDate: complaint.machinePurchaseDate ? 
           complaint.machinePurchaseDate.split('T')[0] : '',
-        assignedStaff: complaint.assignedStaff?.id || null
+        assignedStaff: complaint.assignedStaff?.id || null,
+        scheduledDate: complaint.scheduledDate ? 
+          complaint.scheduledDate.split('T')[0] : ''
       });
     } catch (error) {
       setError('Error fetching complaint details');
@@ -109,7 +112,8 @@ const ComplaintForm = () => {
     try {
       const dataToSubmit = {
         ...formData,
-        assignedStaff: formData.assignedStaff ? { id: formData.assignedStaff } : null
+        assignedStaff: formData.assignedStaff ? { id: formData.assignedStaff } : null,
+        scheduledDate: formData.scheduledDate ? formData.scheduledDate + 'T09:00:00' : null
       };
 
       if (isEdit) {
@@ -155,7 +159,7 @@ const ComplaintForm = () => {
                 {/* Customer Information */}
                 <h5 className="mb-3">Customer Information</h5>
                 <Row>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Customer Name *</Form.Label>
                       <Form.Control
@@ -167,7 +171,7 @@ const ComplaintForm = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Mobile Number *</Form.Label>
                       <Form.Control
@@ -182,7 +186,7 @@ const ComplaintForm = () => {
                 </Row>
 
                 <Row>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Email</Form.Label>
                       <Form.Control
@@ -193,7 +197,7 @@ const ComplaintForm = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Address *</Form.Label>
                       <Form.Control
@@ -208,7 +212,7 @@ const ComplaintForm = () => {
                 </Row>
 
                 <Row>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>City *</Form.Label>
                       <Form.Control
@@ -220,7 +224,7 @@ const ComplaintForm = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>State *</Form.Label>
                       <Form.Control
@@ -237,7 +241,7 @@ const ComplaintForm = () => {
                 {/* Machine Information */}
                 <h5 className="mb-3 mt-4">Machine Information</h5>
                 <Row>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Machine Name/Model *</Form.Label>
                       <Form.Control
@@ -249,7 +253,7 @@ const ComplaintForm = () => {
                       />
                     </Form.Group>
                   </Col>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Machine Purchase Date</Form.Label>
                       <Form.Control
@@ -275,7 +279,7 @@ const ComplaintForm = () => {
                 {/* Complaint Details */}
                 <h5 className="mb-3 mt-4">Complaint Details</h5>
                 <Row>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Complaint Type *</Form.Label>
                       <Form.Select
@@ -292,7 +296,7 @@ const ComplaintForm = () => {
                       </Form.Select>
                     </Form.Group>
                   </Col>
-                  <Col md={6}>
+                  <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Priority *</Form.Label>
                       <Form.Select
@@ -352,13 +356,29 @@ const ComplaintForm = () => {
                             value={formData.assignedStaff || ''}
                             onChange={handleChange}
                           >
-                            <option value="">Select Staff Member</option>
                             {staffMembers.map(staff => (
                               <option key={staff.id} value={staff.id}>
                                 {staff.fullName} ({staff.username})
                               </option>
                             ))}
                           </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Scheduled Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="scheduledDate"
+                            value={formData.scheduledDate ? formData.scheduledDate.split('T')[0] : ''}
+                            onChange={handleChange}
+                          />
+                          <Form.Text className="text-muted">
+                            Set when this complaint should be addressed
+                          </Form.Text>
                         </Form.Group>
                       </Col>
                     </Row>

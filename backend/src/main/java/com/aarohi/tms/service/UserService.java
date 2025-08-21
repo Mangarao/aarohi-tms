@@ -111,6 +111,13 @@ public class UserService {
     }
     
     /**
+     * Get all staff members (active and inactive)
+     */
+    public List<User> getAllStaff() {
+        return userRepository.findByRole(Role.STAFF);
+    }
+    
+    /**
      * Delete user by ID
      */
     public void deleteUser(Long id) {

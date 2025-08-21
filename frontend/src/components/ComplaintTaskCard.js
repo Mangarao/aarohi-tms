@@ -5,7 +5,7 @@ import { Card, Badge, Button, Form, Row, Col, Alert } from 'react-bootstrap';
  * Enhanced Complaint Card component with task scheduling for staff
  */
 const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
-  const [scheduleDate, setScheduleDate] = useState(complaint.scheduleDate || '');
+  const [scheduleDate, setScheduleDate] = useState(complaint.scheduledDate || '');
   const [completionDate, setCompletionDate] = useState(complaint.completionDate || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -93,22 +93,23 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
   };
 
   return (
-    <Card className="mb-3 shadow-sm">
+    <Card className="mb-3 shadow-sm card-responsive">
       <Card.Body>
-        <div className="d-flex justify-content-between align-items-start mb-3">
-          <div>
-            <h6 className="mb-1 fw-bold">Complaint #{complaint.id}</h6>
-            <p className="text-muted small mb-0">{complaint.customerName}</p>
-            <small className="text-muted">{complaint.mobileNumber}</small>
+        <div className="d-flex justify-content-between align-items-start mb-3 flex-wrap">
+          <div className="mb-2 mb-md-0">
+            <h6 className="mb-1 fw-bold">📋 Complaint #{complaint.id}</h6>
+            <p className="text-muted small mb-0">👤 {complaint.customerName}</p>
+            <small className="text-muted">📞 {complaint.mobileNumber}</small>
           </div>
           <div className="text-end">
-            <Badge bg={getStatusVariant(complaint.status)} className="me-2 mb-1">
-              {complaint.status}
-            </Badge>
-            <br />
-            <Badge bg={getPriorityVariant(complaint.priority)}>
-              {complaint.priority}
-            </Badge>
+            <div className="badge-group">
+              <Badge bg={getStatusVariant(complaint.status)} className="me-2 mb-1">
+                {complaint.status}
+              </Badge>
+              <Badge bg={getPriorityVariant(complaint.priority)}>
+                {complaint.priority}
+              </Badge>
+            </div>
           </div>
         </div>
 
@@ -125,17 +126,17 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
         )}
 
         <div className="mb-3">
-          <p className="small mb-1"><strong>Machine:</strong> {complaint.machineNameModel}</p>
-          <p className="small mb-1"><strong>Type:</strong> {complaint.complaintType}</p>
-          <p className="small mb-0"><strong>Problem:</strong> {complaint.problemDescription}</p>
+          <p className="small mb-1"><strong>🔧 Machine:</strong> {complaint.machineNameModel}</p>
+          <p className="small mb-1"><strong>📋 Type:</strong> {complaint.complaintType}</p>
+          <p className="small mb-0"><strong>❗ Problem:</strong> {complaint.problemDescription}</p>
         </div>
 
         {/* Task Scheduling Section for Staff */}
         {currentUser.role === 'STAFF' && (
           <div className="border-top pt-3 mb-3">
-            <h6 className="mb-3 text-primary">Task Scheduling</h6>
+            <h6 className="mb-3 text-primary">⏰ Task Scheduling</h6>
             <Row>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label className="small fw-bold">Schedule Date & Time</Form.Label>
                   <Form.Control
@@ -151,7 +152,7 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
                   </small>
                 </Form.Group>
               </Col>
-              <Col md={6}>
+              <Col xs={12} md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label className="small fw-bold">Completion Date & Time</Form.Label>
                   <Form.Control
@@ -172,13 +173,13 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
         )}
 
         {/* Action Buttons */}
-        <div className="d-flex justify-content-between align-items-center">
-          <small className="text-muted">
-            Created: {new Date(complaint.createdAt).toLocaleDateString()}
+        <div className="d-flex justify-content-between align-items-center flex-wrap">
+          <small className="text-muted mb-2 mb-md-0">
+            📅 Created: {new Date(complaint.createdAt).toLocaleDateString()}
           </small>
           
           {currentUser.role === 'STAFF' && (
-            <div>
+            <div className="btn-group-responsive">
               {complaint.status === 'ASSIGNED' && (
                 <Button
                   size="sm"
@@ -187,7 +188,7 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
                   disabled={loading}
                   className="me-2"
                 >
-                  {loading ? 'Starting...' : 'Start Work'}
+                  {loading ? '⏳ Starting...' : '▶️ Start Work'}
                 </Button>
               )}
               {complaint.status === 'IN_PROGRESS' && (
@@ -197,7 +198,7 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
                   onClick={() => handleStatusUpdate('CLOSED')}
                   disabled={loading}
                 >
-                  {loading ? 'Completing...' : 'Mark Complete'}
+                  {loading ? '⏳ Completing...' : '✅ Mark Complete'}
                 </Button>
               )}
             </div>
@@ -207,14 +208,14 @@ const ComplaintTaskCard = ({ complaint, onUpdateComplaint, currentUser }) => {
         {/* Task Timeline Display */}
         {(scheduleDate || completionDate) && (
           <div className="border-top pt-3 mt-3">
-            <h6 className="mb-2 text-secondary small">Task Timeline</h6>
-            <div className="d-flex justify-content-between small">
-              <div>
-                <span className="fw-bold">Scheduled:</span> {formatDate(scheduleDate)}
+            <h6 className="mb-2 text-secondary small">📊 Task Timeline</h6>
+            <div className="d-flex justify-content-between small flex-wrap">
+              <div className="mb-1 mb-md-0">
+                <span className="fw-bold">📅 Scheduled:</span> {formatDate(scheduleDate)}
               </div>
               {completionDate && (
                 <div>
-                  <span className="fw-bold">Completed:</span> {formatDate(completionDate)}
+                  <span className="fw-bold">✅ Completed:</span> {formatDate(completionDate)}
                 </div>
               )}
             </div>

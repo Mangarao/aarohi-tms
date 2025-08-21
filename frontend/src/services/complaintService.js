@@ -64,6 +64,50 @@ class ComplaintService {
     }
   }
 
+  // Assign complaint to staff with schedule date
+  async assignComplaintWithSchedule(complaintId, staffId, scheduleDate) {
+    try {
+      // Ensure the datetime has proper format
+      let formattedDate = scheduleDate;
+      if (scheduleDate && !scheduleDate.includes('T')) {
+        // If only date is provided, add default time
+        formattedDate = scheduleDate + 'T09:00:00';
+      } else if (scheduleDate && scheduleDate.includes(':') && scheduleDate.split(':').length === 2) {
+        // If datetime without seconds is provided, add seconds
+        formattedDate = scheduleDate + ':00';
+      }
+      
+      const response = await api.put(`/complaints/${complaintId}/assign/${staffId}/schedule`, null, {
+        params: { scheduleDate: formattedDate }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  // Update schedule date for a complaint
+  async updateScheduleDate(complaintId, scheduleDate) {
+    try {
+      // Ensure the datetime has proper format
+      let formattedDate = scheduleDate;
+      if (scheduleDate && !scheduleDate.includes('T')) {
+        // If only date is provided, add default time
+        formattedDate = scheduleDate + 'T09:00:00';
+      } else if (scheduleDate && scheduleDate.includes(':') && scheduleDate.split(':').length === 2) {
+        // If datetime without seconds is provided, add seconds
+        formattedDate = scheduleDate + ':00';
+      }
+        
+      const response = await api.put(`/complaints/${complaintId}/schedule`, null, {
+        params: { scheduleDate: formattedDate }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
   // Update complaint status
   async updateComplaintStatus(id, status, resolutionNotes = '') {
     try {
@@ -198,6 +242,90 @@ class ComplaintService {
       return await response.json();
     } catch (error) {
       return null; // Return null if there's any error
+    }
+  }
+
+  // Get staff schedule for a specific date
+  async getStaffScheduleForDate(staffId, date) {
+    try {
+      const response = await api.get(`/complaints/staff/${staffId}/schedule`, {
+        params: { date }
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching schedule for staff ${staffId}:`, error);
+      return []; // Return empty array on error
+    }
+  }
+
+  // Get all staff schedules for a date range
+  async getAllStaffSchedules(startDate, endDate) {
+    try {
+      const response = await api.get('/complaints/schedules', {
+        params: { startDate, endDate }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all staff schedules:', error);
+      return []; // Return empty array on error
+    }
+  }
+
+  // Get complaints by schedule date range
+  async getComplaintsByScheduleDateRange(startDate, endDate, staffId = null) {
+    try {
+      const params = { startDate, endDate };
+      if (staffId) {
+        params.staffId = staffId;
+      }
+      const response = await api.get('/complaints/schedule/date-range', { params });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  // Get today's scheduled complaints
+  async getTodaysScheduledComplaints() {
+    try {
+      const response = await api.get('/complaints/schedule/today');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  // Get this week's scheduled complaints
+  async getWeeklyScheduledComplaints() {
+    try {
+      const response = await api.get('/complaints/schedule/week');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  // Get staff schedule summary
+  async getStaffScheduleSummary(startDate, endDate) {
+    try {
+      const response = await api.get('/complaints/schedule/staff-summary', {
+        params: { startDate, endDate }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  }
+
+  // Get weekly schedule summary
+  async getWeeklyScheduleSummary(startDate) {
+    try {
+      const response = await api.get('/complaints/schedules/weekly', {
+        params: { startDate }
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.aarohi.tms.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class ComplaintController {
      * Get complaint by ID
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @complaintService.getComplaintById(#id).get().assignedStaff?.id == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or @complaintService.canUserAccessComplaint(#id, authentication.principal.id)")
     public ResponseEntity<?> getComplaintById(@PathVariable Long id) {
         return complaintService.getComplaintById(id)
                 .map(complaint -> ResponseEntity.ok().body(complaint))
@@ -80,7 +81,7 @@ public class ComplaintController {
      * Update complaint
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (@complaintService.getComplaintById(#id).isPresent() and @complaintService.getComplaintById(#id).get().assignedStaff?.id == authentication.principal.id)")
+    @PreAuthorize("hasRole('ADMIN') or @complaintService.canUserAccessComplaint(#id, authentication.principal.id)")
     public ResponseEntity<?> updateComplaint(@PathVariable Long id, @Valid @RequestBody Complaint complaintDetails) {
         try {
             Complaint updatedComplaint = complaintService.updateComplaint(id, complaintDetails);
@@ -123,10 +124,51 @@ public class ComplaintController {
     }
     
     /**
+     * Assign complaint to staff with schedule date (Admin only)
+     */
+    @PutMapping("/{complaintId}/assign/{staffId}/schedule")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> assignComplaintWithSchedule(@PathVariable Long complaintId, 
+                                                         @PathVariable Long staffId,
+                                                         @RequestParam String scheduleDate) {
+        try {
+            LocalDateTime scheduleDatetime = LocalDateTime.parse(scheduleDate);
+            Complaint complaint = complaintService.assignComplaintWithSchedule(complaintId, staffId, scheduleDatetime);
+            return ResponseEntity.ok(complaint);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: Invalid date format. Please use ISO format (yyyy-MM-ddTHH:mm:ss)"));
+        }
+    }
+    
+    /**
+     * Update schedule date for a complaint (Admin only)
+     */
+    @PutMapping("/{complaintId}/schedule")
+    @PreAuthorize("hasRole('ADMIN') or @complaintService.canUserAccessComplaint(#complaintId, authentication.principal.id)")
+    public ResponseEntity<?> updateScheduleDate(@PathVariable Long complaintId,
+                                                @RequestParam String scheduleDate) {
+        try {
+            LocalDateTime scheduleDatetime = LocalDateTime.parse(scheduleDate);
+            Complaint complaint = complaintService.updateScheduleDate(complaintId, scheduleDatetime);
+            return ResponseEntity.ok(complaint);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: Invalid date format. Please use ISO format (yyyy-MM-ddTHH:mm:ss)"));
+        }
+    }
+    
+    /**
      * Update complaint status
      */
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('ADMIN') or (@complaintService.getComplaintById(#id).isPresent() and @complaintService.getComplaintById(#id).get().assignedStaff?.id == authentication.principal.id)")
+    @PreAuthorize("hasRole('ADMIN') or @complaintService.canUserAccessComplaint(#id, authentication.principal.id)")
     public ResponseEntity<?> updateComplaintStatus(@PathVariable Long id, 
                                                    @RequestParam Status status,
                                                    @RequestParam(required = false) String resolutionNotes) {
@@ -228,6 +270,70 @@ public class ComplaintController {
     }
     
     /**
+     * Get complaints by schedule date range (Admin only)
+     */
+    @GetMapping("/schedule/date-range")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Complaint>> getComplaintsByScheduleDateRange(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(required = false) Long staffId) {
+        try {
+            LocalDateTime start = LocalDateTime.parse(startDate);
+            LocalDateTime end = LocalDateTime.parse(endDate);
+            
+            List<Complaint> complaints;
+            if (staffId != null) {
+                complaints = complaintService.getComplaintsByStaffAndScheduleDateRange(staffId, start, end);
+            } else {
+                complaints = complaintService.getComplaintsByScheduleDateRange(start, end);
+            }
+            return ResponseEntity.ok(complaints);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get today's scheduled complaints (Admin only)
+     */
+    @GetMapping("/schedule/today")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Complaint>> getTodaysScheduledComplaints() {
+        List<Complaint> complaints = complaintService.getTodaysScheduledComplaints();
+        return ResponseEntity.ok(complaints);
+    }
+    
+    /**
+     * Get this week's scheduled complaints (Admin only)
+     */
+    @GetMapping("/schedule/week")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Complaint>> getWeeklyScheduledComplaints() {
+        List<Complaint> complaints = complaintService.getWeeklyScheduledComplaints();
+        return ResponseEntity.ok(complaints);
+    }
+    
+    /**
+     * Get staff schedule summary for a date range (Admin only)
+     */
+    @GetMapping("/schedule/staff-summary")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getStaffScheduleSummary(
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        try {
+            LocalDateTime start = LocalDateTime.parse(startDate);
+            LocalDateTime end = LocalDateTime.parse(endDate);
+            Object summary = complaintService.getStaffScheduleSummary(start, end);
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: Invalid date format. Please use ISO format (yyyy-MM-ddTHH:mm:ss)"));
+        }
+    }
+    
+    /**
      * Get complaint statistics (Admin only)
      */
     @GetMapping("/stats")
@@ -277,6 +383,50 @@ public class ComplaintController {
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new MessageResponse("Error checking existing complaint: " + e.getMessage()));
+        }
+    }
+    
+    /**
+     * Get staff schedule for a specific date (Admin only)
+     */
+    @GetMapping("/staff/{staffId}/schedule")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Complaint>> getStaffScheduleForDate(@PathVariable Long staffId, 
+                                                                  @RequestParam String date) {
+        try {
+            List<Complaint> schedule = complaintService.getStaffScheduleForDate(staffId, date);
+            return ResponseEntity.ok(schedule);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    /**
+     * Get all staff schedules for a date range (Admin only)
+     */
+    @GetMapping("/schedules")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllStaffSchedules(@RequestParam String startDate, 
+                                                 @RequestParam String endDate) {
+        try {
+            return ResponseEntity.ok(complaintService.getAllStaffSchedules(startDate, endDate));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error fetching schedules: " + e.getMessage()));
+        }
+    }
+    
+    /**
+     * Get weekly schedule summary (Admin only)
+     */
+    @GetMapping("/schedules/weekly")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getWeeklyScheduleSummary(@RequestParam String startDate) {
+        try {
+            return ResponseEntity.ok(complaintService.getWeeklyScheduleSummary(startDate));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error fetching weekly summary: " + e.getMessage()));
         }
     }
 }

@@ -95,3 +95,357 @@ code {
   max-height: 60px;
   width: auto;
 }
+
+/* ===== RESPONSIVE DESIGN IMPROVEMENTS ===== */
+
+/* Mobile-first responsive design */
+@media (max-width: 767.98px) {
+  /* Container padding for mobile */
+  .container-fluid, .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  /* Dashboard cards spacing */
+  .dashboard-card {
+    margin-bottom: 1rem;
+  }
+
+  /* Table responsive improvements */
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+
+  .table th, .table td {
+    padding: 0.5rem 0.25rem;
+    vertical-align: middle;
+  }
+
+  /* Action buttons on mobile */
+  .btn-group-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+  }
+
+  .btn-group-mobile .btn {
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Card titles responsive */
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  /* Modal responsive */
+  .modal-dialog {
+    margin: 1rem;
+  }
+
+  /* Form spacing on mobile */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  /* Status badges responsive */
+  .badge {
+    font-size: 0.7em;
+    padding: 0.25em 0.5em;
+  }
+
+  /* Login form mobile adjustments */
+  .login-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  /* Navigation mobile improvements */
+  .navbar-nav .nav-link {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Tablet responsive design */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Tablet-specific adjustments */
+  .container-fluid {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .table th, .table td {
+    padding: 0.6rem 0.4rem;
+  }
+
+  .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Desktop improvements */
+@media (min-width: 992px) {
+  /* Better spacing for larger screens */
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Table improvements */
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+}
+
+/* ===== TABLE RESPONSIVE IMPROVEMENTS ===== */
+.table-mobile-stack {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .table-mobile-stack thead {
+    display: none;
+  }
+
+  .table-mobile-stack tbody,
+  .table-mobile-stack tr,
+  .table-mobile-stack td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-mobile-stack tr {
+    border: 1px solid #dee2e6;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: #fff;
+  }
+
+  .table-mobile-stack td {
+    border: none;
+    padding: 0.25rem 0;
+    text-align: left;
+  }
+
+  .table-mobile-stack td:before {
+    content: attr(data-label) ": ";
+    font-weight: bold;
+    color: #495057;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-truncate-mobile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+@media (max-width: 767.98px) {
+  .text-truncate-mobile {
+    max-width: 100px;
+  }
+  
+  .d-none-mobile {
+    display: none !important;
+  }
+  
+  .d-block-mobile {
+    display: block !important;
+  }
+}
+
+/* ===== CARD IMPROVEMENTS ===== */
+.card-responsive {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 575.98px) {
+  .card-responsive .card-body {
+    padding: 1rem;
+  }
+  
+  .card-responsive .card-header {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ===== FORM IMPROVEMENTS ===== */
+@media (max-width: 767.98px) {
+  .form-floating {
+    margin-bottom: 1rem;
+  }
+  
+  .input-group {
+    flex-direction: column;
+  }
+  
+  .input-group .btn {
+    border-radius: 0.375rem !important;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ===== BUTTON IMPROVEMENTS ===== */
+.btn-responsive {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 767.98px) {
+  .btn-responsive {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  
+  .btn-group-responsive {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-group-responsive .btn {
+    margin-bottom: 0.25rem;
+    border-radius: 0.375rem !important;
+  }
+}
+
+/* ===== COMPLAINTS TABLE RESPONSIVE ===== */
+@media (max-width: 767.98px) {
+  .complaints-table-responsive table,
+  .complaints-table-responsive thead,
+  .complaints-table-responsive tbody,
+  .complaints-table-responsive th,
+  .complaints-table-responsive td,
+  .complaints-table-responsive tr {
+    display: block;
+  }
+  
+  .complaints-table-responsive thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .complaints-table-responsive tr {
+    border: 1px solid #dee2e6;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .complaints-table-responsive td {
+    border: none !important;
+    position: relative;
+    padding: 8px 8px 8px 35% !important;
+    margin-bottom: 8px;
+    min-height: 30px;
+  }
+  
+  .complaints-table-responsive td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 30%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #495057;
+    font-size: 0.875rem;
+  }
+  
+  .complaints-table-responsive .btn-group-vertical {
+    flex-direction: row;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  
+  .complaints-table-responsive .btn-group-vertical .btn {
+    flex: 1;
+    min-width: auto;
+  }
+}
+
+/* ===== NAVBAR MOBILE IMPROVEMENTS ===== */
+@media (max-width: 991.98px) {
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-nav .nav-link:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ===== GENERAL MOBILE IMPROVEMENTS ===== */
+@media (max-width: 767.98px) {
+  /* Container padding adjustments */
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  /* Typography adjustments */
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  /* Modal improvements */
+  .modal-dialog {
+    margin: 10px;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  /* Badge improvements */
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.5rem;
+  }
+  
+  /* Alert improvements */
+  .alert {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+  }
+  
+  /* Card spacing */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
