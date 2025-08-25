@@ -55,8 +55,10 @@ function App() {
         {user && <NavbarComponent user={user} onLogout={handleLogout} />}
         
         <Routes>
-          {/* Public routes */}
-          <Route path="/complaint" element={<PublicComplaintForm />} />
+          {/* Complaint route: show full form for logged-in users, public form otherwise */}
+          <Route path="/complaint" element={
+            user ? <ComplaintForm /> : <PublicComplaintForm />
+          } />
           <Route path="/complaint/success" element={<ComplaintSuccess />} />
           
           <Route 
@@ -104,16 +106,6 @@ function App() {
             } 
           />
 
-          <Route 
-            path="/complaints/new" 
-            element={
-              user ? (
-                <ComplaintForm />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } 
-          />
 
           <Route 
             path="/complaints/edit/:id" 

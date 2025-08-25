@@ -187,60 +187,30 @@ class ComplaintService {
     try {
       console.log('Submitting complaint:', complaintData);
       
-      const response = await fetch('http://localhost:8080/api/complaints/public', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(complaintData)
-      });
+      const response = await api.post('/complaints/public', complaintData);
       
       console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        let errorMessage = 'Failed to submit complaint';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-        throw new Error(errorMessage);
-      }
-      
-      const result = await response.json();
-      console.log('Success:', result);
-      return result;
+      console.log('Success:', response.data);
+      return response.data;
     } catch (error) {
       console.error('Error submitting complaint:', error);
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('Unable to connect to server. Please check if the backend is running on port 8080.');
+      if (error.code === 'ERR_NETWORK') {
+        throw new Error('Unable to connect to server. Please check if the backend is running.');
       }
-      throw error;
+      throw error.response?.data || error;
     }
   }
 
   // Check for existing complaint by mobile number
   async checkExistingComplaint(mobileNumber) {
     try {
-      const response = await fetch(`http://localhost:8080/api/complaints/check-existing/${mobileNumber}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (response.status === 404) {
+      const response = await api.get(`/complaints/check-existing/${mobileNumber}`);
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
         return null; // No existing complaint
       }
-      
-      if (!response.ok) {
-        throw new Error('Failed to check existing complaint');
-      }
-      
-      return await response.json();
-    } catch (error) {
+      console.error('Error checking existing complaint:', error);
       return null; // Return null if there's any error
     }
   }

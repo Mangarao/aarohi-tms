@@ -231,7 +231,7 @@ const StaffDashboard = () => {
                 <Col md={6} className="mb-2">
                   <Button 
                     as={Link} 
-                    to="/complaints/new" 
+                    to="/complaint" 
                     variant="success" 
                     className="w-100"
                   >

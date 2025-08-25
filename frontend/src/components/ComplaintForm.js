@@ -214,11 +214,11 @@ const ComplaintForm = () => {
                 <Row>
                   <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>City *</Form.Label>
+                      <Form.Label>State *</Form.Label>
                       <Form.Control
                         type="text"
-                        name="city"
-                        value={formData.city}
+                        name="state"
+                        value={formData.state}
                         onChange={handleChange}
                         required
                       />
@@ -226,11 +226,11 @@ const ComplaintForm = () => {
                   </Col>
                   <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>State *</Form.Label>
+                      <Form.Label>City *</Form.Label>
                       <Form.Control
                         type="text"
-                        name="state"
-                        value={formData.state}
+                        name="city"
+                        value={formData.city}
                         onChange={handleChange}
                         required
                       />

@@ -201,7 +201,7 @@ const ComplaintList = () => {
             </div>
             <Button 
               as={Link} 
-              to="/complaints/new" 
+              to="/complaint" 
               variant="primary"
               className="w-auto"
             >

@@ -9,6 +9,7 @@
 - ✅ Nginx installed
 - ✅ Project directories created: `/opt/aarohi-tms/frontend` and `/opt/aarohi-tms/backend`
 
+SSH root@119.18.55.169
 
 # Fix backend directory ownership and permissions
 sudo chown -R root:root /opt/aarohi-tms/backend/
@@ -416,6 +417,8 @@ sudo systemctl status aarohi-tms-backend
 ```bash
 # Copy new build files
 scp -r build/* root@119.18.55.169:/opt/aarohi-tms/frontend/
+
+
 
 # Clear Nginx cache (if any)
 sudo systemctl reload nginx

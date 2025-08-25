@@ -150,7 +150,7 @@ const AdminDashboard = () => {
                 <Card.Body>
                   <h5>Quick Actions</h5>
                   <div className="d-grid gap-2">
-                    <Button as={Link} to="/complaints/new" variant="primary">
+                    <Button as={Link} to="/complaint" variant="primary">
                       New Complaint
                     </Button>
                     <Button as={Link} to="/users" variant="outline-primary">

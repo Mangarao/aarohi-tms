@@ -12,6 +12,5 @@ USE task_management_db;
 -- FLUSH PRIVILEGES;
 
 -- Sample data will be automatically inserted by the DataInitializer component
--- Default users:
--- Admin: username=admin, password=admin123
--- Staff: username=staff, password=staff123
+-- Default admin user:
+-- Admin: username=admin, password=aarohi@18

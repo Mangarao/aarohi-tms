@@ -65,7 +65,7 @@ const NavbarComponent = ({ user, onLogout }) => {
               </>
             )}
             
-            <LinkContainer to="/complaints/new">
+            <LinkContainer to="/complaint">
               <Nav.Link>➕ <span className="d-none d-lg-inline">New Complaint</span></Nav.Link>
             </LinkContainer>
           </Nav>
