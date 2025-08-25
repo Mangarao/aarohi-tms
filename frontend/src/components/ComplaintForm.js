@@ -9,6 +9,68 @@ import authService from '../services/authService';
  * Complaint Form component for creating and editing complaints
  */
 const ComplaintForm = () => {
+  // Mobile number validation
+  const mobileRegex = /^[6-9]\d{9}$/;
+  const [mobileError, setMobileError] = useState('');
+
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, mobileNumber: value }));
+    if (!mobileRegex.test(value)) {
+      setMobileError('Enter a valid 10-digit mobile number starting with 6-9');
+    } else {
+      setMobileError('');
+    }
+  };
+  // Helper to count words
+  const countWords = str => str.trim().split(/\s+/).filter(Boolean).length;
+
+  // Handler for problem description with word limit
+  const handleProblemDescriptionChange = (e) => {
+    const value = e.target.value;
+    if (countWords(value) <= 100) {
+      setFormData(prev => ({ ...prev, problemDescription: value }));
+    }
+  };
+  // State to cities mapping
+  const stateCityMap = {
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati"],
+    "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat"],
+    "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon"],
+    "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia"],
+    "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba"],
+    "Goa": ["Panaji", "Margao", "Vasco da Gama"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+    "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Hisar"],
+    "Himachal Pradesh": ["Shimla", "Solan", "Dharamshala"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
+    "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur"],
+    "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Sagar"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Thane"],
+    "Manipur": ["Imphal"],
+    "Meghalaya": ["Shillong"],
+    "Mizoram": ["Aizawl"],
+    "Nagaland": ["Dimapur", "Kohima"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur"],
+    "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala"],
+    "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner"],
+    "Sikkim": ["Gangtok"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+    "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+    "Tripura": ["Agartala"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee"],
+    "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri"],
+    "Delhi": ["New Delhi", "Delhi"],
+    "Puducherry": ["Puducherry"],
+    "Chandigarh": ["Chandigarh"],
+    "Jammu and Kashmir": ["Srinagar", "Jammu"],
+    "Ladakh": ["Leh", "Kargil"],
+    "Lakshadweep": ["Kavaratti"],
+    "Andaman and Nicobar Islands": ["Port Blair"]
+  };
+
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
@@ -65,11 +127,21 @@ const ComplaintForm = () => {
       const complaint = await complaintService.getComplaintById(id);
       setFormData({
         ...complaint,
-        machinePurchaseDate: complaint.machinePurchaseDate ? 
-          complaint.machinePurchaseDate.split('T')[0] : '',
+        machinePurchaseDate: complaint.machinePurchaseDate
+          ? (typeof complaint.machinePurchaseDate === 'string'
+              ? complaint.machinePurchaseDate.split('T')[0]
+              : (complaint.machinePurchaseDate instanceof Date
+                  ? complaint.machinePurchaseDate.toISOString().split('T')[0]
+                  : ''))
+          : '',
         assignedStaff: complaint.assignedStaff?.id || null,
-        scheduledDate: complaint.scheduledDate ? 
-          complaint.scheduledDate.split('T')[0] : ''
+        scheduledDate: complaint.scheduledDate
+          ? (typeof complaint.scheduledDate === 'string'
+              ? complaint.scheduledDate.split('T')[0]
+              : (complaint.scheduledDate instanceof Date
+                  ? complaint.scheduledDate.toISOString().split('T')[0]
+                  : ''))
+          : ''
       });
     } catch (error) {
       setError('Error fetching complaint details');
@@ -178,9 +250,15 @@ const ComplaintForm = () => {
                         type="tel"
                         name="mobileNumber"
                         value={formData.mobileNumber}
-                        onChange={handleChange}
+                        onChange={handleMobileChange}
                         required
+                        maxLength={10}
+                        pattern="[6-9]{1}[0-9]{9}"
+                        placeholder="Enter 10-digit mobile number"
                       />
+                      {mobileError && (
+                        <div style={{ color: 'red', fontSize: '0.9em' }}>{mobileError}</div>
+                      )}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -215,13 +293,17 @@ const ComplaintForm = () => {
                   <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>State *</Form.Label>
-                      <Form.Control
-                        type="text"
+                      <Form.Select
                         name="state"
                         value={formData.state}
                         onChange={handleChange}
                         required
-                      />
+                      >
+                        <option value="">Select State</option>
+                        {Object.keys(stateCityMap).map(state => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
+                      </Form.Select>
                     </Form.Group>
                   </Col>
                   <Col xs={12} md={6}>
@@ -233,7 +315,15 @@ const ComplaintForm = () => {
                         value={formData.city}
                         onChange={handleChange}
                         required
+                        list="city-list"
+                        placeholder="Select or enter city"
+                        disabled={!formData.state}
                       />
+                      <datalist id="city-list">
+                        {formData.state && stateCityMap[formData.state] && stateCityMap[formData.state].map(city => (
+                          <option key={city} value={city} />
+                        ))}
+                      </datalist>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -322,9 +412,14 @@ const ComplaintForm = () => {
                     rows={4}
                     name="problemDescription"
                     value={formData.problemDescription}
-                    onChange={handleChange}
+                    onChange={handleProblemDescriptionChange}
                     required
+                    placeholder="Describe the problem (max 100 words)"
                   />
+                  <div style={{ fontSize: '0.9em', color: countWords(formData.problemDescription) > 100 ? 'red' : 'gray' }}>
+                    {countWords(formData.problemDescription)} / 100 words
+                    {countWords(formData.problemDescription) > 100 && ' (Limit exceeded!)'}
+                  </div>
                 </Form.Group>
 
                 {/* Admin only fields */}

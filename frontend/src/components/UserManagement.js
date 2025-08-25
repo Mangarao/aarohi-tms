@@ -6,6 +6,19 @@ import userService from '../services/userService';
  * User Management component for Admin to manage users
  */
 const UserManagement = () => {
+  // Mobile number validation
+  const mobileRegex = /^[6-9]\d{9}$/;
+  const [mobileError, setMobileError] = useState('');
+
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, mobileNumber: value }));
+    if (!mobileRegex.test(value)) {
+      setMobileError('Enter a valid 10-digit mobile number starting with 6-9');
+    } else {
+      setMobileError('');
+    }
+  };
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -314,9 +327,15 @@ const UserManagement = () => {
                     type="tel"
                     name="mobileNumber"
                     value={formData.mobileNumber}
-                    onChange={handleChange}
+                    onChange={handleMobileChange}
                     required
+                    maxLength={10}
+                    pattern="[6-9]{1}[0-9]{9}"
+                    placeholder="Enter 10-digit mobile number"
                   />
+                  {mobileError && (
+                    <div style={{ color: 'red', fontSize: '0.9em' }}>{mobileError}</div>
+                  )}
                 </Form.Group>
               </Col>
             </Row>

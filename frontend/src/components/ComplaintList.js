@@ -349,11 +349,7 @@ const ComplaintList = () => {
                         </div>
                       </td>
                       <td data-label="Issue">
-                        <div 
-                          className="text-truncate" 
-                          style={{ maxWidth: '200px' }}
-                          title={complaint.problemDescription}
-                        >
+                        <div>
                           <Badge bg="info" className="small">
                             {complaint.complaintType.replace('_', ' ')}
                           </Badge>

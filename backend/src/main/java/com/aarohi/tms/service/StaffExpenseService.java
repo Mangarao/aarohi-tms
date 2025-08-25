@@ -21,6 +21,29 @@ import com.aarohi.tms.repository.UserRepository;
 @Service
 @Transactional
 public class StaffExpenseService {
+    /**
+     * Staff marks expense as cleared (after advance/payment)
+     */
+    public StaffExpense clearExpense(Long expenseId, Long staffUserId) {
+        StaffExpense expense = staffExpenseRepository.findById(expenseId)
+                .orElseThrow(() -> new RuntimeException("Staff expense not found with id: " + expenseId));
+        if (!expense.getStaffUser().getId().equals(staffUserId)) {
+            throw new RuntimeException("You are not authorized to clear this expense");
+        }
+        expense.setStatus(ExpenseStatus.CLEARED);
+        expense.setUpdatedAt(LocalDateTime.now());
+        return staffExpenseRepository.save(expense);
+    }
+    /**
+     * Pay advance amount for staff expense (Admin only)
+     */
+    public StaffExpense payAdvance(Long expenseId, BigDecimal amount) {
+        StaffExpense expense = staffExpenseRepository.findById(expenseId)
+                .orElseThrow(() -> new RuntimeException("Staff expense not found with id: " + expenseId));
+        expense.setAdvancePaid(amount);
+        expense.setUpdatedAt(LocalDateTime.now());
+        return staffExpenseRepository.save(expense);
+    }
     
     @Autowired
     private StaffExpenseRepository staffExpenseRepository;

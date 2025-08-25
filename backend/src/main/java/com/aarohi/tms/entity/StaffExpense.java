@@ -28,6 +28,8 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "staff_expenses")
 public class StaffExpense {
+    @Column(name = "advance_paid", precision = 10, scale = 2)
+    private BigDecimal advancePaid;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,6 +92,13 @@ public class StaffExpense {
     }
     
     // Getters and Setters
+    public BigDecimal getAdvancePaid() {
+        return advancePaid;
+    }
+    public void setAdvancePaid(BigDecimal advancePaid) {
+        this.advancePaid = advancePaid;
+        this.updatedAt = LocalDateTime.now();
+    }
     public Long getId() {
         return id;
     }

@@ -3,6 +3,16 @@ import api from './api';
 const API_URL = '/staff-expenses';
 
 class StaffExpenseService {
+  // Staff clears expense (marks as cleared)
+  async clearExpense(id) {
+    try {
+      const response = await api.put(`${API_URL}/${id}/clear`);
+      return response.data;
+    } catch (error) {
+      console.error('Error clearing expense:', error);
+      throw error;
+    }
+  }
   // Create new staff expense
   async createStaffExpense(expenseData) {
     try {

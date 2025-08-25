@@ -4,14 +4,38 @@ import staffExpenseService from '../services/staffExpenseService';
 import StaffExpenseModal from './StaffExpenseModal';
 
 const StaffExpenseManager = () => {
-  const [unpaidExpenses, setUnpaidExpenses] = useState([]);
-  const [paidExpenses, setPaidExpenses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingExpense, setEditingExpense] = useState(null);
+  // Fetch expenses data from backend
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      const [unpaid, paid] = await Promise.all([
+        staffExpenseService.getMyUnpaidStaffExpenses(),
+        staffExpenseService.getMyStaffExpenses()
+      ]);
+      setUnpaidExpenses(unpaid);
+      setPaidExpenses(paid.filter(e => e.isPaidByCompany));
+      setStats({
+        totalUnpaidAmount: unpaid.reduce((sum, e) => sum + (e.amount || 0), 0),
+        totalPaidAmount: paid.filter(e => e.isPaidByCompany).reduce((sum, e) => sum + (e.amount || 0), 0),
+        unpaidCount: unpaid.length,
+        paidCount: paid.filter(e => e.isPaidByCompany).length,
+        totalCount: paid.length
+      });
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch expenses');
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAllData();
+    // eslint-disable-next-line
+  }, []);
+  // Add missing state variables and stubs
+  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(null);
   const [stats, setStats] = useState({
-    totalAmount: 0,
     totalUnpaidAmount: 0,
     totalPaidAmount: 0,
     unpaidCount: 0,
@@ -19,83 +43,54 @@ const StaffExpenseManager = () => {
     totalCount: 0
   });
   const [activeTab, setActiveTab] = useState('unpaid');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
-  const fetchUnpaidExpenses = async () => {
-    try {
-      const data = await staffExpenseService.getMyUnpaidStaffExpenses();
-      setUnpaidExpenses(data);
-    } catch (err) {
-      console.error('Error fetching unpaid expenses:', err);
-    }
-  };
-
-  const fetchPaidExpenses = async () => {
-    try {
-      const data = await staffExpenseService.getMyPaidStaffExpenses();
-      setPaidExpenses(data);
-    } catch (err) {
-      console.error('Error fetching paid expenses:', err);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const data = await staffExpenseService.getMyStaffExpenseStats();
-      setStats(data);
-    } catch (err) {
-      console.error('Error fetching stats:', err);
-    }
-  };
-
-  const fetchAllData = async () => {
-    try {
-      setLoading(true);
-      await Promise.all([
-        fetchUnpaidExpenses(),
-        fetchPaidExpenses(),
-        fetchStats()
-      ]);
-    } catch (err) {
-      setError('Failed to fetch expense data');
-      console.error('Error fetching expense data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // Handler stubs
   const handleAddExpense = () => {
     setEditingExpense(null);
     setShowModal(true);
   };
-
   const handleEditExpense = (expense) => {
-    if (expense.isPaidByCompany) {
-      // Just show details in modal for paid expenses
-      setEditingExpense(expense);
-      setShowModal(true);
-    } else {
-      setEditingExpense(expense);
-      setShowModal(true);
+    setEditingExpense(expense);
+    setShowModal(true);
+  };
+  const [clearingExpenseId, setClearingExpenseId] = useState(null);
+  const [clearMessage, setClearMessage] = useState('');
+
+  const handleDeleteExpense = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this expense?')) return;
+    try {
+      await staffExpenseService.deleteStaffExpense(id);
+      setClearMessage('Expense deleted successfully.');
+      await fetchAllData();
+    } catch (err) {
+      setError('Failed to delete expense');
     }
   };
 
-  const handleDeleteExpense = async (expenseId) => {
-    if (window.confirm('Are you sure you want to delete this expense?')) {
-      try {
-        await staffExpenseService.deleteStaffExpense(expenseId);
-        await fetchAllData();
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to delete expense');
-        console.error('Error deleting expense:', err);
+  const handleClearExpense = async (id) => {
+    setClearingExpenseId(id);
+    try {
+      await staffExpenseService.clearExpense(id);
+      setClearMessage('Expense marked as cleared.');
+      await fetchAllData();
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setError('Failed to clear expense: ' + err.response.data.message);
+      } else {
+        setError('Failed to clear expense');
       }
     }
+    setClearingExpenseId(null);
   };
+  // ...existing code...
+  // Place return statement at the end
+  const [unpaidExpenses, setUnpaidExpenses] = useState([]);
+  const [paidExpenses, setPaidExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  // ...existing code...
+  // Place return statement at the end
 
   const handleExpenseSaved = async () => {
     await fetchAllData();
@@ -205,6 +200,18 @@ const StaffExpenseManager = () => {
                           🗑️
                         </Button>
                       )}
+                      {/* Clear button for unpaid expenses */}
+                      {!expense.isPaidByCompany && expense.status !== 'CLEARED' && (
+                        <Button
+                          variant="outline-success"
+                          size="sm"
+                          disabled={clearingExpenseId === expense.id}
+                          onClick={() => handleClearExpense(expense.id)}
+                          title="Mark as Cleared"
+                        >
+                          {clearingExpenseId === expense.id ? 'Clearing...' : 'Clear'}
+                        </Button>
+                      )}
                     </div>
                   </td>
                 )}
@@ -214,7 +221,7 @@ const StaffExpenseManager = () => {
         </Table>
       </div>
     );
-  };
+  }
 
   if (loading) {
     return (
@@ -249,7 +256,7 @@ const StaffExpenseManager = () => {
         </Card.Header>
         <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}
-          
+          {clearMessage && <Alert variant="success">{clearMessage}</Alert>}
           {/* Stats Row */}
           <Row className="mb-4">
             <Col md={3}>
@@ -277,7 +284,6 @@ const StaffExpenseManager = () => {
               </div>
             </Col>
           </Row>
-
           {/* Search Bar */}
           <Row className="mb-3">
             <Col md={6}>
@@ -294,7 +300,6 @@ const StaffExpenseManager = () => {
               </InputGroup>
             </Col>
           </Row>
-
           {/* Tabs for different views */}
           <Tabs
             activeKey={activeTab}
@@ -310,7 +315,6 @@ const StaffExpenseManager = () => {
           </Tabs>
         </Card.Body>
       </Card>
-
       <StaffExpenseModal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -319,6 +323,6 @@ const StaffExpenseManager = () => {
       />
     </>
   );
-};
+}
 
 export default StaffExpenseManager;

@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
- // baseURL: 'https://tms.aarohisewing.com/api',
+ // baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://tms.aarohisewing.com/api',
   headers: {
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache',

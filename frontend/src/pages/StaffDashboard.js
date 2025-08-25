@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Table, Badge, Modal, Alert, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import complaintService from '../services/complaintService';
+import StaffExpenseManager from '../components/StaffExpenseManager';
 
 /**
  * Staff Dashboard component
@@ -209,7 +210,8 @@ const StaffDashboard = () => {
         </Col>
       </Row>
 
-      {/* Quick Actions */}
+
+      {/* Staff Expenses Quick Action */}
       <Row className="mb-4">
         <Col>
           <Card>
@@ -218,7 +220,18 @@ const StaffDashboard = () => {
             </Card.Header>
             <Card.Body>
               <Row>
-                <Col md={6} className="mb-2">
+                <Col md={4} className="mb-2">
+                  <Button 
+                    as={Link} 
+                    to="/staff/expenses" 
+                    variant="warning" 
+                    className="w-100"
+                  >
+                    💸 My Expenses
+                  </Button>
+                </Col>
+                {/* ...existing quick action buttons... */}
+                <Col md={4} className="mb-2">
                   <Button 
                     as={Link} 
                     to="/complaints" 
@@ -228,7 +241,7 @@ const StaffDashboard = () => {
                     📋 View All Complaints
                   </Button>
                 </Col>
-                <Col md={6} className="mb-2">
+                <Col md={4} className="mb-2">
                   <Button 
                     as={Link} 
                     to="/complaint" 

@@ -43,30 +43,30 @@ const NavbarComponent = ({ user, onLogout }) => {
             {isAdmin && (
               <>
                 <LinkContainer to="/admin/dashboard">
-                  <Nav.Link>📊 <span className="d-none d-lg-inline">Dashboard</span></Nav.Link>
-                </LinkContainer>
-                <LinkContainer to="/complaints">
-                  <Nav.Link>📋 <span className="d-none d-lg-inline">All Complaints</span></Nav.Link>
+                  <Nav.Link>📊 Dashboard</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/users">
-                  <Nav.Link>👥 <span className="d-none d-lg-inline">User Management</span></Nav.Link>
+                  <Nav.Link>👥 User Management</Nav.Link>
                 </LinkContainer>
               </>
             )}
-            
+
             {isStaff && (
               <>
                 <LinkContainer to="/staff/dashboard">
-                  <Nav.Link>📊 <span className="d-none d-lg-inline">Dashboard</span></Nav.Link>
+                  <Nav.Link>📊 Dashboard</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/complaints">
-                  <Nav.Link>📋 <span className="d-none d-lg-inline">My Complaints</span></Nav.Link>
+                <LinkContainer to="/staff/expenses">
+                  <Nav.Link>💸 My Expenses</Nav.Link>
                 </LinkContainer>
               </>
             )}
-            
+
+            <LinkContainer to="/complaints">
+              <Nav.Link>📋 View All Complaints</Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/complaint">
-              <Nav.Link>➕ <span className="d-none d-lg-inline">New Complaint</span></Nav.Link>
+              <Nav.Link>➕ New Complaint</Nav.Link>
             </LinkContainer>
           </Nav>
           

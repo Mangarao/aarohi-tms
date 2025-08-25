@@ -1,5 +1,6 @@
 package com.aarohi.tms.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,6 +35,35 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/staff-expenses")
 public class StaffExpenseController {
+    /**
+     * Clear expense (Staff marks as cleared after advance/payment)
+     */
+    @PutMapping("/{id}/clear")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<?> clearExpense(@PathVariable Long id, Authentication authentication) {
+        try {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            StaffExpense updatedExpense = staffExpenseService.clearExpense(id, userPrincipal.getId());
+            return ResponseEntity.ok(updatedExpense);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse(e.getMessage()));
+        }
+    }
+    /**
+     * Pay advance amount for staff expense (Admin only)
+     */
+    @PutMapping("/{id}/pay-advance")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> payAdvance(@PathVariable Long id, @RequestParam BigDecimal amount) {
+        try {
+            StaffExpense updatedExpense = staffExpenseService.payAdvance(id, amount);
+            return ResponseEntity.ok(updatedExpense);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse(e.getMessage()));
+        }
+    }
     
     @Autowired
     private StaffExpenseService staffExpenseService;
